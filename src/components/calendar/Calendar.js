@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import "../../styles/fullcalendar.min.css";
 
 class Calendar extends Component {
   render() {
-    return <h2>Calendar</h2>;
+    return <div id="calendar" className="mdl-cell mdl-cell--10-col" />;
   }
 }
 

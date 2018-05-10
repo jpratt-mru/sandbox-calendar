@@ -14,7 +14,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div id="container" className="mdl-grid">
         <Calendar />
         <SideBar />
       </div>
