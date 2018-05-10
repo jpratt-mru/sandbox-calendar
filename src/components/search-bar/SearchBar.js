@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 
 class SearchBar extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <form action="#">
@@ -9,6 +13,7 @@ class SearchBar extends Component {
             id="filter-terms"
             className="mdl-textfield__input"
             type="text"
+            value={this.props.filterText}
           />
           <label className="mdl-textfield__label" htmlFor="filter-terms">
             Filter...

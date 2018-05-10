@@ -1,8 +1,16 @@
 import React, { Component } from "react";
+import Warning from "../warning/Warning";
+import "./warning-list.css";
 
 class WarningList extends Component {
   render() {
-    return <h2>WarningList</h2>;
+    return (
+      <div id="warning-list">
+        <ul className="mdl-list">
+          <Warning />
+        </ul>
+      </div>
+    );
   }
 }
 

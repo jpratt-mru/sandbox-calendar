@@ -10,13 +10,24 @@ class App extends Component {
       filterText: "",
       classroomEvents: []
     };
+
+    this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
+  }
+
+  handleFilterTextChange(filterText) {
+    this.setState({
+      filterText: filterText
+    });
   }
 
   render() {
     return (
       <div id="container" className="mdl-grid">
         <Calendar />
-        <SideBar />
+        <SideBar
+          filterText={this.state.filterText}
+          onFilterTextChange={this.handleFilterTextChange}
+        />
       </div>
     );
   }
