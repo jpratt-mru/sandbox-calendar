@@ -2,7 +2,7 @@ var EventFilter = require("./EventFilter");
 var array = require("lodash/array");
 
 var eventFilter = new EventFilter();
-const filterableTerms = ["a", "b", "c"];
+const filterableTerms = ["ape", "bat", "cats"];
 
 describe("no filtering", () => {
   test("when using an empty filter", () => {
@@ -24,7 +24,7 @@ describe("no filtering", () => {
   });
 
   test("when text contains exactly the filterable terms separated by whitespace", () => {
-    let filterText = "a\tb\t\t   c";
+    let filterText = "ape\tbat\t\t   cats";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
     let expected = filterableTerms;
@@ -33,7 +33,7 @@ describe("no filtering", () => {
   });
 
   test("when text contains exactly the filterable terms separated by whitespace, even with different casing", () => {
-    let filterText = "a\tB\t\t   C";
+    let filterText = "aPE\tBaT\t   CaTs";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
     let expected = filterableTerms;
@@ -42,7 +42,25 @@ describe("no filtering", () => {
   });
 
   test("when text contains exactly the filterable terms separated by whitespace, even if different order", () => {
-    let filterText = "c\ta\t\t   b";
+    let filterText = "cats\tape\t\t   bat";
+
+    let actual = eventFilter.filter(filterableTerms, filterText);
+    let expected = filterableTerms;
+
+    expect(actual).toContainOnly(expected);
+  });
+
+  test("when text contains exactly the filterable terms separated by whitespace, even if only partially matching start", () => {
+    let filterText = "cat\tap\t\t   b";
+
+    let actual = eventFilter.filter(filterableTerms, filterText);
+    let expected = filterableTerms;
+
+    expect(actual).toContainOnly(expected);
+  });
+
+  test("when text contains exactly the filterable terms separated by whitespace, even if only partially matching after start", () => {
+    let filterText = "at\tpe\t\t   a";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
     let expected = filterableTerms;
@@ -53,7 +71,7 @@ describe("no filtering", () => {
 
 describe("everthing is filtered out", () => {
   test("when text is a single term that doesn't match", () => {
-    let filterText = "d";
+    let filterText = "dog";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
     let expected = [];
@@ -62,7 +80,7 @@ describe("everthing is filtered out", () => {
   });
 
   test("when text has multiple terms that all don't match", () => {
-    let filterText = "d e";
+    let filterText = "dog egg";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
     let expected = [];
@@ -71,7 +89,16 @@ describe("everthing is filtered out", () => {
   });
 
   test("when text has just one term that doesn't match", () => {
-    let filterText = "c b a x";
+    let filterText = "cats bat ape x";
+
+    let actual = eventFilter.filter(filterableTerms, filterText);
+    let expected = [];
+
+    expect(actual).toContainOnly(expected);
+  });
+
+  test("when the text has one item that matches followed by one that doesn't", () => {
+    let filterText = "a x";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
     let expected = [];
@@ -82,19 +109,19 @@ describe("everthing is filtered out", () => {
 
 describe("1 item is returned", () => {
   test("when the text has only that item", () => {
-    let filterText = "b";
+    let filterText = "bat";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = ["b"];
+    let expected = ["bat"];
 
     expect(actual).toContainOnly(expected);
   });
 
   test("when the text has only that item, case insensitive", () => {
-    let filterText = "B";
+    let filterText = "BAT";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = ["b"];
+    let expected = ["bat"];
 
     expect(actual).toContainOnly(expected);
   });
@@ -102,10 +129,10 @@ describe("1 item is returned", () => {
 
 describe("2 items are returned", () => {
   test("when the text has both those items", () => {
-    let filterText = "b a";
+    let filterText = "bat cats";
 
     let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = ["a", "b"];
+    let expected = ["bat", "cats"];
 
     expect(actual).toContainOnly(expected);
   });

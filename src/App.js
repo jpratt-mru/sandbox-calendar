@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ScheduledClassesApi from "./api/ScheduledClassesApi";
 import Calendar from "./components/calendar/Calendar";
 import SideBar from "./components/sidebar/SideBar";
+import EventFilter from "./biz-logic/EventFilter";
 
 class App extends Component {
   constructor(props) {
@@ -10,11 +11,13 @@ class App extends Component {
     let eventsToDisplay = api.classes;
     this.state = {
       filterText: "",
-      classroomEvents: eventsToDisplay
+      classroomEvents: eventsToDisplay,
+      currentEvents: eventsToDisplay
     };
 
     this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
     this.filterClassroomEvents = this.filterClassroomEvents.bind(this);
+    this.filterTerms = this.filterTerms.bind(this);
   }
 
   containsSearchTerm(value, searchTerm) {
@@ -27,8 +30,8 @@ class App extends Component {
     return splitContents;
   }
 
-  classroomEventMatchesFilter(classroomEvent, term) {
-    const terms = filterTerms();
+  classroomEventMatchesFilter(classroomEvent) {
+    const terms = this.filterTerms();
     if (terms.length === 0) {
       return true;
     }
@@ -38,13 +41,17 @@ class App extends Component {
   }
 
   filteredEvents() {
-    return this.state.classroomEvents.filter(
-      this.classroomEventMatchesFilter.bind(this, terms)
+    const eventFilter = new EventFilter();
+    const allEvents = this.state.classroomEvents;
+    const filterText = this.state.filterText;
+
+    return allEvents.filter(event =>
+      eventFilter.filter(event.terms, filterText)
     );
   }
 
   filterClassroomEvents() {
-    this.setState({ classroomEvents: [] });
+    this.setState({ currentEvents: this.filteredEvents() });
   }
 
   handleFilterTextChange(filterText) {
@@ -59,7 +66,7 @@ class App extends Component {
   render() {
     return (
       <div id="container" className="mdl-grid">
-        <Calendar classroomEvents={this.state.classroomEvents} />
+        <Calendar currentEvents={this.state.currentEvents} />
         <SideBar
           filterText={this.state.filterText}
           onFilterTextChange={this.handleFilterTextChange}
