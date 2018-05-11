@@ -8,6 +8,8 @@ import "fullcalendar";
 class Calendar extends Component {
   constructor(props) {
     super(props);
+
+    this.eventGenerator = this.eventGenerator.bind(this);
   }
 
   componentDidMount() {
@@ -15,9 +17,12 @@ class Calendar extends Component {
     $("#calendar").fullCalendar("addEventSource", this.eventGenerator);
   }
 
+  componentDidUpdate() {
+    $("#calendar").fullCalendar("refetchEventSources", this.eventGenerator);
+  }
+
   eventGenerator(start, end, timezone, callback) {
-    const api = new ScheduledClassesApi();
-    let eventsToDisplay = api.classes;
+    let eventsToDisplay = this.props.classroomEvents;
     callback(eventsToDisplay);
   }
 

@@ -1,7 +1,8 @@
 {
-  "name": "new",
+  "name": "macocalendar",
   "version": "1.0.0",
-  "description": "",
+  "description":
+    "Churns through Scheduling spreadsheets and Schedule of Classes HTML dumps to help visualize room schedules and to catch any problems with double-bookings of instructors/rooms or room capacity issues.",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {

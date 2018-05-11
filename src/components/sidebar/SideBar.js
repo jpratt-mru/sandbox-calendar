@@ -11,7 +11,10 @@ class SideBar extends Component {
   render() {
     return (
       <div id="side-bar" className="mdl-cell mdl-cell--2-col">
-        <SearchBar filterText={this.props.filterText} />
+        <SearchBar
+          filterText={this.props.filterText}
+          onFilterTextChange={this.props.onFilterTextChange}
+        />
         <WarningList />
       </div>
     );
