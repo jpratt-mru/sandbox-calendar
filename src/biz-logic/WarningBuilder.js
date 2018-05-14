@@ -14,7 +14,7 @@ WarningBuilder.prototype.add = function(type) {
 WarningBuilder.prototype.warningsFor = function(schedule) {
   let warnings = [];
   this.warningGenerators.forEach(generator =>
-    warnings.push(generator.warnings())
+    warnings.push(generator.warnings(schedule))
   );
   return array.flatten(warnings);
 };
