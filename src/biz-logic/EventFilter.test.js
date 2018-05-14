@@ -2,139 +2,247 @@ var EventFilter = require("./EventFilter");
 var array = require("lodash/array");
 
 var eventFilter = new EventFilter();
-const filterableTerms = ["ape", "bat", "cats"];
+const EVENT_TO_FILTER = {
+  course: "COMP1501",
+  name: "Jordan Pratt",
+  username: "jpratt",
+  room: "B107",
+  start: "2018-09-14T12:30",
+  end: "2018-09-14T13:20"
+};
 
-describe("no filtering", () => {
-  test("when using an empty filter", () => {
-    let filterText = "";
+let expectedResult;
+let actualResult;
+let filterText;
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = filterableTerms;
+let shouldBeFalse = function(filterText) {
+  actualResult = eventFilter.eventMatchesFilterText(
+    EVENT_TO_FILTER,
+    filterText
+  );
 
-    expect(actual).toContainOnly(expected);
+  expect(actualResult).toBeFalsy();
+};
+
+let shouldBeTrue = function(filterText) {
+  actualResult = eventFilter.eventMatchesFilterText(
+    EVENT_TO_FILTER,
+    filterText
+  );
+
+  expect(actualResult).toBeTruthy();
+};
+
+describe("reports a match", () => {
+  test("when using undefined filter text", () => {
+    shouldBeTrue(undefined);
   });
 
-  test("when using a whitespace-only filter", () => {
-    let filterText = "  \t\n  \n\t";
-
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = filterableTerms;
-
-    expect(actual).toContainOnly(expected);
+  test("when using null filter text", () => {
+    shouldBeTrue(null);
   });
 
-  test("when text contains exactly the filterable terms separated by whitespace", () => {
-    let filterText = "ape\tbat\t\t   cats";
-
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = filterableTerms;
-
-    expect(actual).toContainOnly(expected);
+  test("when using empty filter text", () => {
+    shouldBeTrue("");
   });
 
-  test("when text contains exactly the filterable terms separated by whitespace, even with different casing", () => {
+  test("when using a whitespace-only filter text", () => {
+    shouldBeTrue("  \t\n  \n\t");
+  });
+
+  test("when a full case-sensitive match occurs on one property", () => {
+    shouldBeTrue("jpratt");
+  });
+
+  test("when a full case-insensitive match occurs on one property", () => {
+    shouldBeTrue("jPrATt");
+  });
+
+  test("when a full case-sensitive match occurs on two properties", () => {
+    shouldBeTrue("jpratt B107");
+  });
+
+  test("when a full case-insensitive match occurs on two properties", () => {
+    shouldBeTrue("jPrATt coMp1501");
+  });
+
+  test("when full matches occur on all properties, same order", () => {
+    shouldBeTrue(
+      "COMP1501 Jordan Pratt B107 2018-09-14T12:30 2018-09-14T13:20"
+    );
+  });
+
+  test("when full matches occur on all properties, mixed up order", () => {
+    shouldBeTrue(
+      "B107 COMP1501 Jordan Pratt 2018-09-14T13:20 2018-09-14T12:30 "
+    );
+  });
+
+  test("when a start-of-word match occurs on one property", () => {
+    shouldBeTrue("jp");
+  });
+
+  test("when a middle-of-word match occurs on one property", () => {
+    shouldBeTrue("50");
+  });
+
+  test("when a end-of-word match occurs on one property", () => {
+    shouldBeTrue("07");
+  });
+
+  test("when multiple terms partially match one property", () => {
+    shouldBeTrue("co mp 15 1");
+  });
+});
+
+describe("reports no match", () => {
+  test("when using a null event", () => {
+    let no_such_event;
+    expect(
+      eventFilter.eventMatchesFilterText(no_such_event, "bar")
+    ).toBeFalsy();
+  });
+
+  test("when event has no matches, not even partial", () => {
+    let filterText = "ape \t bat \t\t   cats";
+  });
+
+  test.skip("when text contains exactly the filterable terms separated by whitespace, even with different casing", () => {
     let filterText = "aPE\tBaT\t   CaTs";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = filterableTerms;
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = EVENT_TO_FILTER;
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 
-  test("when text contains exactly the filterable terms separated by whitespace, even if different order", () => {
+  test.skip("when text contains exactly the filterable terms separated by whitespace, even if different order", () => {
     let filterText = "cats\tape\t\t   bat";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = filterableTerms;
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = EVENT_TO_FILTER;
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 
-  test("when text contains exactly the filterable terms separated by whitespace, even if only partially matching start", () => {
+  test.skip("when text contains exactly the filterable terms separated by whitespace, even if only partially matching start", () => {
     let filterText = "cat\tap\t\t   b";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = filterableTerms;
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = EVENT_TO_FILTER;
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 
-  test("when text contains exactly the filterable terms separated by whitespace, even if only partially matching after start", () => {
+  test.skip("when text contains exactly the filterable terms separated by whitespace, even if only partially matching after start", () => {
     let filterText = "at\tpe\t\t   a";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = filterableTerms;
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = EVENT_TO_FILTER;
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 });
 
 describe("everthing is filtered out", () => {
-  test("when text is a single term that doesn't match", () => {
+  test.skip("when text is a single term that doesn't match", () => {
     let filterText = "dog";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = [];
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = [];
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 
-  test("when text has multiple terms that all don't match", () => {
+  test.skip("when text has multiple terms that all don't match", () => {
     let filterText = "dog egg";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = [];
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = [];
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 
-  test("when text has just one term that doesn't match", () => {
+  test.skip("when text has just one term that doesn't match", () => {
     let filterText = "cats bat ape x";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = [];
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = [];
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 
-  test("when the text has one item that matches followed by one that doesn't", () => {
+  test.skip("when the text has one item that matches followed by one that doesn't", () => {
     let filterText = "a x";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = [];
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = [];
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 });
 
 describe("1 item is returned", () => {
-  test("when the text has only that item", () => {
+  test.skip("when the text has only that item", () => {
     let filterText = "bat";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = ["bat"];
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = ["bat"];
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 
-  test("when the text has only that item, case insensitive", () => {
+  test.skip("when the text has only that item, case insensitive", () => {
     let filterText = "BAT";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = ["bat"];
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = ["bat"];
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 });
 
 describe("2 items are returned", () => {
-  test("when the text has both those items", () => {
+  test.skip("when the text has both those items", () => {
     let filterText = "bat cats";
 
-    let actual = eventFilter.filter(filterableTerms, filterText);
-    let expected = ["bat", "cats"];
+    let actualResult = eventFilter.eventMatchesFilterText(
+      EVENT_TO_FILTER,
+      filterText
+    );
+    let expectedResult = ["bat", "cats"];
 
-    expect(actual).toContainOnly(expected);
+    expect(actualResult).toContainOnly(expectedResult);
   });
 });
 
@@ -151,13 +259,13 @@ expect.extend({
     if (pass) {
       return {
         message: () =>
-          `expected [${received}] not to have the same elements as [${argument}]`,
+          `expectedResult [${received}] not to have the same elements as [${argument}]`,
         pass: true
       };
     } else {
       return {
         message: () =>
-          `expected [${received}] to have the same elements as [${argument}]`,
+          `expectedResult [${received}] to have the same elements as [${argument}]`,
         pass: false
       };
     }

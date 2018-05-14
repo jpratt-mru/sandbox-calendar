@@ -2,6 +2,13 @@ var EventFilter = (module.exports = function() {});
 var array = require("lodash/array");
 var string = require("lodash/string");
 
+EventFilter.prototype.eventMatchesFilterText = function(event, filterText) {
+  return event
+    ? isEmpty(filterText) ||
+        filterTextMatchesAtLeastOnePropertyValue(event, filterText)
+    : false;
+};
+
 EventFilter.prototype.filter = function(filterableTerms, filterText) {
   if (!filterableTerms) {
     return [];
@@ -14,6 +21,25 @@ EventFilter.prototype.filter = function(filterableTerms, filterText) {
   let filters = split(filterText);
 
   return filters.every(filter => contains(filterableTerms, filter));
+};
+
+var filterFoundInAtLeastOnePropertyValue = function(event, filter) {
+  for (let property in event) {
+    let lowerCasePropertyValue = String(event[property]).toLowerCase();
+    let lowerCaseFilter = filter.toLowerCase();
+    if (lowerCasePropertyValue.indexOf(lowerCaseFilter) !== -1) {
+      return true;
+    }
+  }
+  return false;
+};
+
+var filterTextMatchesAtLeastOnePropertyValue = function(event, filterText) {
+  let filters = split(filterText);
+
+  return filters.some(filter =>
+    filterFoundInAtLeastOnePropertyValue(event, filter)
+  );
 };
 
 var contains = function(collection, item) {
@@ -34,7 +60,7 @@ var contains = function(collection, item) {
 };
 
 var isEmpty = function(text) {
-  return text.trim().length === 0;
+  return !text || text.trim().length === 0;
 };
 
 // return text split by whitespace

@@ -46,7 +46,7 @@ class App extends Component {
     const filterText = this.state.filterText;
 
     return allEvents.filter(event =>
-      eventFilter.filter(event.terms, filterText)
+      eventFilter.eventMatchesFilterText(event.terms, filterText)
     );
   }
 
@@ -65,7 +65,7 @@ class App extends Component {
 
   render() {
     return (
-      <div id="container" className="mdl-grid">
+      <div id="containers" className="mdl-grid">
         <Calendar currentEvents={this.state.currentEvents} />
         <SideBar
           filterText={this.state.filterText}
