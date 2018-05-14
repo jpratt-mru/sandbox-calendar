@@ -15,7 +15,7 @@ class SideBar extends Component {
           filterText={this.props.filterText}
           onFilterTextChange={this.props.onFilterTextChange}
         />
-        <WarningList />
+        <WarningList warnings={this.props.warnings} />
       </div>
     );
   }

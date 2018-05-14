@@ -22,7 +22,7 @@ class Calendar extends Component {
   }
 
   eventGenerator(start, end, timezone, callback) {
-    let eventsToDisplay = this.props.currentEvents;
+    let eventsToDisplay = this.props.filteredClassroomEvents;
     callback(eventsToDisplay);
   }
 

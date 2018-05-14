@@ -1,6 +1,4 @@
 var EventFilter = (module.exports = function() {});
-var array = require("lodash/array");
-var string = require("lodash/string");
 
 EventFilter.prototype.eventMatchesFilterText = function(event, filterText) {
   return event

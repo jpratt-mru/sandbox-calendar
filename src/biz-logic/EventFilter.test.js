@@ -1,5 +1,4 @@
 var EventFilter = require("./EventFilter");
-var array = require("lodash/array");
 
 var eventFilter = new EventFilter();
 const EVENT_TO_FILTER = {
@@ -92,6 +91,10 @@ describe("reports a match", () => {
 
   test("when multiple terms partially match one property", () => {
     shouldBeTrue("co mp 15 1");
+  });
+
+  test("when a time is used", () => {
+    shouldBeTrue("12:");
   });
 });
 

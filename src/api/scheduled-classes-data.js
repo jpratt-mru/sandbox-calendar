@@ -1,21 +1,39 @@
 export let scheduledClasses = [
   {
-    title: "COMP1501-001 [nkhemka]\nT235",
+    instructor: "Namrata Khemka",
+    username: "nkhemka",
+    room: "T235",
+    course: "COMP1501",
+    section: "001",
     start: "2018-09-10T13:30",
     end: "2018-09-10T14:20",
-    terms: ["COMP1501-001", "nkhemka", "T235"]
+    get title() {
+      return `${this.course}-${this.section} [${this.username}]\n${this.room}`;
+    }
   },
   {
-    title: "COMP1501-001 [nkhemka]\nT235",
+    instructor: "Namrata Khemka",
+    username: "nkhemka",
+    room: "T235",
+    course: "COMP1501",
+    section: "001",
     start: "2018-09-12T13:30",
     end: "2018-09-12T14:20",
-    terms: ["COMP1501-001", "nkhemka", "T235"]
+    get title() {
+      return `${this.course}-${this.section} [${this.username}]\n${this.room}`;
+    }
   },
   {
-    title: "COMP1501-001 [nkhemka]\nT235",
+    instructor: "Namrata Khemka",
+    username: "nkhemka",
+    room: "T235",
+    course: "COMP1501",
+    section: "001",
     start: "2018-09-14T13:30",
     end: "2018-09-14T14:20",
-    terms: ["COMP1501-001", "nkhemka", "T235"]
+    get title() {
+      return `${this.course}-${this.section} [${this.username}]\n${this.room}`;
+    }
   },
   {
     title: "COMP1501-401 [nkhemka]\nB162",
