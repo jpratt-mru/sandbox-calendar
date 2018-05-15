@@ -37,6 +37,7 @@ var conflictsFor = function(eventUnderTest, allEvents) {
   allEvents.forEach(function(event) {
     if (hasConflict(eventUnderTest, event)) {
       let conflict = {
+        crns: eventUnderTest.crn + "."+ event.crn,
         desc: eventUnderTest.instructor + " has a time conflict"
       };
       conflicts.push(conflict);
