@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Warning from "../warning/Warning";
 import "./warning-list.css";
 

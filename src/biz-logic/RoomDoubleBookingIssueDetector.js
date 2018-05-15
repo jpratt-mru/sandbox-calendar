@@ -8,5 +8,5 @@ RoomDoubleBookingIssueDetector.prototype.desc = function() {
 };
 
 RoomDoubleBookingIssueDetector.prototype.warnings = function() {
-  return [{ desc: "room double booking" }];
+  return [];
 };

@@ -8,5 +8,5 @@ RoomCapacityIssueDetector.prototype.desc = function() {
 };
 
 RoomCapacityIssueDetector.prototype.warnings = function() {
-  return [{ desc: "room capacity" }];
+  return [];
 };

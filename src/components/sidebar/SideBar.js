@@ -1,24 +1,19 @@
-import React, { Component } from "react";
+import React from "react";
 import SearchBar from "../search-bar/SearchBar";
 import WarningList from "../warning-list/WarningList";
 import "./side-bar.css";
 
-class SideBar extends Component {
-  constructor(props) {
-    super(props);
-  }
+function SideBar(props) {
 
-  render() {
     return (
       <div id="side-bar" className="mdl-cell mdl-cell--2-col">
         <SearchBar
-          filterText={this.props.filterText}
-          onFilterTextChange={this.props.onFilterTextChange}
+          filterText={props.filterText}
+          onFilterTextChange={props.onFilterTextChange}
         />
-        <WarningList warnings={this.props.warnings} />
+        <WarningList warnings={props.warnings} />
       </div>
     );
   }
-}
 
 export default SideBar;

@@ -1,12 +1,14 @@
-import ScheduledClassesApi from "../api/ScheduledClassesApi";
+var ScheduledClassesApi = require("../api/ScheduledClassesApi");
 
-let SemesterSchedule = (module.exports = function() {
+var SemesterSchedule = (module.exports = function() {
   const api = new ScheduledClassesApi();
-  this.classroomEvents = api.classes;
-
+  this.classroomEvents = api.classes();
+  console.log("classroom events:", this.classroomEvents);
   this.warningList = [];
 });
 
 SemesterSchedule.prototype.events = function() {
   return this.classroomEvents;
 };
+
+

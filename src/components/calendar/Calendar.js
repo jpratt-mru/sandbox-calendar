@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../../styles/fullcalendar.min.css";
-import ScheduledClassesApi from "../../api/ScheduledClassesApi";
+
 
 import $ from "jquery";
 import "fullcalendar";

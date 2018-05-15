@@ -48,11 +48,7 @@ var conflictsFor = function(eventUnderTest, allEvents) {
     }
   });
 
-  console.log("conflicts", conflicts);
-  console.log(
-    "uniq'd:",
-    array.uniqWith(conflicts, (a, b) => a.conflictedCrns === b.conflictedCrns)
-  );
+
 
   return array.uniqWith(
     conflicts,
@@ -61,11 +57,15 @@ var conflictsFor = function(eventUnderTest, allEvents) {
 };
 
 var hasConflict = function(eventUnderTest, event) {
+  if (eventUnderTest.id === event.id) {
+    return false;
+  }
+
   if (eventUnderTest.instructor !== event.instructor) {
     return false;
   }
 
-  if (_.isEqual(eventUnderTest, event)) {
+  if (eventUnderTest.instructor === "TBA" || event.instructor === "TBA") {
     return false;
   }
 

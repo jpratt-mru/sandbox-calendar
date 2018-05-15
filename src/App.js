@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import ScheduledClassesApi from "./api/ScheduledClassesApi";
 import Calendar from "./components/calendar/Calendar";
 import SideBar from "./components/sidebar/SideBar";
 import EventFilter from "./biz-logic/EventFilter";
 import WarningBuilder from "./biz-logic/WarningBuilder";
-import SemesterSchedule from "./biz-logic/SemesterSchedule";
+import SemesterSchedule from './biz-logic/SemesterSchedule';
+
 
 class App extends Component {
   constructor(props) {
