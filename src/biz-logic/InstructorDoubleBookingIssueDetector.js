@@ -1,8 +1,7 @@
 var array = require("lodash/array");
-const Moment = require("moment");
-const MomentRange = require("moment-range");
 
-const moment = MomentRange.extendMoment(Moment);
+const TimeConflictDetector = require("./TimeConflictDetector");
+const timeConflictDetector = new TimeConflictDetector();
 
 var InstructorDoubleBookingIssueDetector = (module.exports = function() {});
 
@@ -25,7 +24,7 @@ var buildWarningList = function(allEvents) {
       issueList.forEach(issue => warningList.push(issue));
     }
   });
-  return warningList;
+  return array.uniqWith(warningList, (a, b) => a.crns === b.crns);
 };
 
 var conflictsFor = function(eventUnderTest, allEvents) {
@@ -36,11 +35,12 @@ var conflictsFor = function(eventUnderTest, allEvents) {
   let conflicts = [];
   allEvents.forEach(function(event) {
     if (hasConflict(eventUnderTest, event)) {
-      const reducer = (accumulator, currentValue) =>
-        accumulator + "." + currentValue;
-      let crns = [eventUnderTest.crn, event.crn].sort().reduce(reducer);
+
+      let conflictingCrns = [eventUnderTest.crn, event.crn].sort().join(".");
+
       let conflict = {
-        conflictedCrns: crns,
+        crns: conflictingCrns,
+
         desc: eventUnderTest.instructor + " has a time conflict"
       };
       conflicts.push(conflict);
@@ -67,16 +67,5 @@ var hasConflict = function(eventUnderTest, event) {
     return false;
   }
 
-  let eventUnderTestRangeStart = moment(eventUnderTest.start);
-  let eventUnderTestRangeEnd = moment(eventUnderTest.end);
-  let eventUnderTestRange = moment.range(
-    eventUnderTestRangeStart,
-    eventUnderTestRangeEnd
-  );
-
-  let eventRangeStart = moment(event.start);
-  let eventRangeEnd = moment(event.end);
-  let eventRange = moment.range(eventRangeStart, eventRangeEnd);
-
-  return eventUnderTestRange.overlaps(eventRange);
+  return timeConflictDetector.hasConflict(eventUnderTest, event);
 };
