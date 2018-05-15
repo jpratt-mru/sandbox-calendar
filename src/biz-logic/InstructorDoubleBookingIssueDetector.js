@@ -1,4 +1,5 @@
 var array = require("lodash/array");
+var _ = require("lodash");
 
 const TimeConflictDetector = require("./TimeConflictDetector");
 const timeConflictDetector = new TimeConflictDetector();
@@ -63,7 +64,8 @@ var hasConflict = function(eventUnderTest, event) {
   if (eventUnderTest.instructor !== event.instructor) {
     return false;
   }
-  if (eventUnderTest.crn === event.crn) {
+
+  if (_.isEqual(eventUnderTest, event)) {
     return false;
   }
 

@@ -9,18 +9,20 @@ import SemesterSchedule from "./biz-logic/SemesterSchedule";
 class App extends Component {
   constructor(props) {
     super(props);
-    const api = new ScheduledClassesApi();
-    let eventsToDisplay = api.classes;
+    //const api = new ScheduledClassesApi();
+    //let eventsToDisplay = api.classes;
     let semesterSchedule = new SemesterSchedule();
+    let eventsToDisplay = semesterSchedule.events();
     let warningBuilder = new WarningBuilder();
     warningBuilder.add("RoomCapacityIssueDetector");
     warningBuilder.add("RoomDoubleBookingIssueDetector");
     warningBuilder.add("InstructorDoubleBookingIssueDetector");
+    let warnings = warningBuilder.warningsFor(semesterSchedule);
     this.state = {
       filterText: "",
       allClassroomEvents: eventsToDisplay,
       filteredClassroomEvents: eventsToDisplay,
-      warningList: warningBuilder.warningsFor(semesterSchedule)
+      warningList: warnings
     };
 
     this.filterClassroomEvents = this.filterClassroomEvents.bind(this);
