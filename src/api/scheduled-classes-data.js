@@ -7,6 +7,7 @@ export let scheduledClasses = [
     section: "001",
     start: "2018-09-10T13:30",
     end: "2018-09-10T14:20",
+    crn: "43139",
     get title() {
       return `${this.course}-${this.section} [${this.username}]\n${this.room}`;
     }
@@ -17,8 +18,9 @@ export let scheduledClasses = [
     room: "T235",
     course: "COMP1501",
     section: "001",
-    start: "2018-09-12T13:30",
-    end: "2018-09-12T14:20",
+    start: "2018-09-10T13:30",
+    end: "2018-09-10T14:20",
+    crn: "43139",
     get title() {
       return `${this.course}-${this.section} [${this.username}]\n${this.room}`;
     }
@@ -31,6 +33,7 @@ export let scheduledClasses = [
     section: "001",
     start: "2018-09-14T13:30",
     end: "2018-09-14T14:20",
+    crn: "43139",
     get title() {
       return `${this.course}-${this.section} [${this.username}]\n${this.room}`;
     }
