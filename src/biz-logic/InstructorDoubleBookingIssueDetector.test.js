@@ -80,7 +80,7 @@ describe("should have one conflict", () => {
         ];
       }
     };
-
+    console.log("THE ONE");
     expect(
       instructorDoubleBookingIssueDetector.warnings(dummySchedule)
     ).toMatchObject([{ desc: expect.stringMatching(/Namrata Khemka/) }]);

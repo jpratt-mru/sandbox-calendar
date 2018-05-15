@@ -35,17 +35,28 @@ var conflictsFor = function(eventUnderTest, allEvents) {
   let conflicts = [];
   allEvents.forEach(function(event) {
     if (hasConflict(eventUnderTest, event)) {
+
       let conflictingCrns = [eventUnderTest.crn, event.crn].sort().join(".");
 
       let conflict = {
         crns: conflictingCrns,
+
         desc: eventUnderTest.instructor + " has a time conflict"
       };
       conflicts.push(conflict);
     }
   });
 
-  return conflicts;
+  console.log("conflicts", conflicts);
+  console.log(
+    "uniq'd:",
+    array.uniqWith(conflicts, (a, b) => a.conflictedCrns === b.conflictedCrns)
+  );
+
+  return array.uniqWith(
+    conflicts,
+    (a, b) => a.conflictedCrns === b.conflictedCrns
+  );
 };
 
 var hasConflict = function(eventUnderTest, event) {
