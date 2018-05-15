@@ -1,3 +1,7 @@
+//
+// use moment-range library https://github.com/rotaready/moment-range
+// to detect time conflicts
+//
 const Moment = require("moment");
 const MomentRange = require("moment-range");
 const moment = MomentRange.extendMoment(Moment);

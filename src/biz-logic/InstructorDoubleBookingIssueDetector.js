@@ -1,73 +1,76 @@
-var array = require("lodash/array");
-var _ = require("lodash");
-
+const lodashArray = require("lodash/array");
+//
+// use moment library https://momentjs.com
+// to display days of week nicely
+//
+const moment = require("moment");
 const TimeConflictDetector = require("./TimeConflictDetector");
+
 const timeConflictDetector = new TimeConflictDetector();
 
-var InstructorDoubleBookingIssueDetector = (module.exports = function() {});
 
-InstructorDoubleBookingIssueDetector.prototype.desc = function() {
-  return "instructor double booking";
-};
+let InstructorDoubleBookingIssueDetector = (module.exports = function() {});
+
 
 InstructorDoubleBookingIssueDetector.prototype.warnings = function(schedule) {
-  let allEvents = schedule.events();
+  const allEvents = schedule.events();
 
-  return buildWarningList(allEvents);
+  return warningListFor(allEvents);
 };
 
-var buildWarningList = function(allEvents) {
+let warningListFor = function(allEvents) {
   let warningList = [];
+
   allEvents.forEach(function(event) {
     const issueList = conflictsFor(event, allEvents);
 
-    if (issueList.length !== 0) {
+    if (issuesFoundIn(issueList)) {
       issueList.forEach(issue => warningList.push(issue));
     }
   });
-  return array.uniqWith(warningList, (a, b) => a.crns === b.crns);
+
+  return lodashArray.uniqWith(
+    warningList,
+    (a, b) => a.desc === b.desc
+  );
 };
 
-var conflictsFor = function(eventUnderTest, allEvents) {
-  if (allEvents.length <= 1) {
-    return [];
-  }
+
+let issuesFoundIn = function(issueList) {
+  return issueList.length !== 0;
+};
+
+let conflictsFor = function(eventBeingTested, allEvents) {
+
+  if (allEvents.length <= 1) return [];
 
   let conflicts = [];
   allEvents.forEach(function(event) {
-    if (hasConflict(eventUnderTest, event)) {
-
-      let conflictingCrns = [eventUnderTest.crn, event.crn].sort().join(".");
-
+    if (hasConflict(eventBeingTested, event)) {
+      let dayOfWeek = moment(eventBeingTested.start).format("dddd");
       let conflict = {
-        crns: conflictingCrns,
-
-        desc: eventUnderTest.instructor + " has a time conflict"
+        desc: eventBeingTested.instructor + " has a time conflict on " + dayOfWeek
       };
       conflicts.push(conflict);
     }
   });
 
-
-
-  return array.uniqWith(
-    conflicts,
-    (a, b) => a.conflictedCrns === b.conflictedCrns
-  );
+  return conflicts;
 };
 
-var hasConflict = function(eventUnderTest, event) {
-  if (eventUnderTest.id === event.id) {
+let hasConflict = function(event, otherEvent) {
+
+  if (event.id === otherEvent.id) {
     return false;
   }
 
-  if (eventUnderTest.instructor !== event.instructor) {
+  if (event.instructor !== otherEvent.instructor) {
     return false;
   }
 
-  if (eventUnderTest.instructor === "TBA" || event.instructor === "TBA") {
+  if (event.instructor === "TBA" || otherEvent.instructor === "TBA") {
     return false;
   }
 
-  return timeConflictDetector.hasConflict(eventUnderTest, event);
+  return timeConflictDetector.hasConflict(event, otherEvent);
 };

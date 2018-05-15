@@ -1,20 +1,21 @@
-var array = require("lodash/array");
+let lodashArray = require("lodash/array");
+let WarningDetectorFactory = require("./WarningDetectorFactory");
 
-var WarningFactory = require("./WarningFactory");
-
-var WarningBuilder = (module.exports = function() {
-  this.warningGenerators = [];
-  this.warningFactory = new WarningFactory();
+let WarningBuilder = (module.exports = function() {
+  this.warningDetectors = [];
+  this.warningDetectorFactory = new WarningDetectorFactory();
 });
 
 WarningBuilder.prototype.add = function(type) {
-  this.warningGenerators.push(this.warningFactory.create(type));
+  this.warningDetectors.push(this.warningDetectorFactory.create(type));
 };
 
 WarningBuilder.prototype.warningsFor = function(schedule) {
   let warnings = [];
-  this.warningGenerators.forEach(generator =>
-    warnings.push(generator.warnings(schedule))
+
+  this.warningDetectors.forEach(detector =>
+    warnings.push(detector.warnings(schedule))
   );
-  return array.flatten(warnings);
+
+  return lodashArray.flatten(warnings);
 };
