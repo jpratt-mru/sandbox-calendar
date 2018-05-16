@@ -1,8 +1,9 @@
-var InstructorDoubleBookingIssueDetector = require("./InstructorDoubleBookingIssueDetector");
+var RoomDoubleBookingIssueDetector = require("./RoomDoubleBookingIssueDetector");
 
-const instructorDoubleBookingIssueDetector = new InstructorDoubleBookingIssueDetector();
+const roomDoubleBookingIssueDetector = new RoomDoubleBookingIssueDetector();
 
 describe("should be empty", () => {
+
   test("when the schedule has no events", () => {
     let dummySchedule = {
       events: function() {
@@ -11,16 +12,19 @@ describe("should be empty", () => {
     };
 
     expect(
-      instructorDoubleBookingIssueDetector.warnings(dummySchedule)
+      roomDoubleBookingIssueDetector.warnings(dummySchedule)
     ).toEqual([]);
   });
+
+
+
 
   test("when the schedule has one event", () => {
     let dummySchedule = {
       events: function() {
         return [{
           id: "1",
-          instructor: "Namrata Khemka",
+          room: "B107",
           start: "2018-09-12T13:30",
           end: "2018-09-12T14:20",
           crn: "1"
@@ -29,23 +33,23 @@ describe("should be empty", () => {
     };
 
     expect(
-      instructorDoubleBookingIssueDetector.warnings(dummySchedule)
+      roomDoubleBookingIssueDetector.warnings(dummySchedule)
     ).toEqual([]);
   });
 
-  test("when the schedule has two events with one instructor and no time overlap", () => {
+  test("when the schedule has two events with one room and no time overlap", () => {
     let dummySchedule = {
       events: function() {
         return [{
             id: "1",
-            instructor: "Namrata Khemka",
+            room: "B107",
             start: "2018-09-12T13:30",
             end: "2018-09-12T14:20",
             crn: "1"
           },
           {
             id: "2",
-            instructor: "Namrata Khemka",
+            room: "B107",
             start: "2018-09-12T14:21",
             end: "2018-09-12T15:00",
             crn: "2"
@@ -55,23 +59,23 @@ describe("should be empty", () => {
     };
 
     expect(
-      instructorDoubleBookingIssueDetector.warnings(dummySchedule)
+      roomDoubleBookingIssueDetector.warnings(dummySchedule)
     ).toEqual([]);
   });
 
-  test("when the schedule has two events with different instructors and time overlap", () => {
+  test("when the schedule has two events with two rooms and time overlap", () => {
     let dummySchedule = {
       events: function() {
         return [{
             id: "1",
-            instructor: "Namrata Khemka",
+            room: "B107",
             start: "2018-09-12T13:30",
             end: "2018-09-12T14:20",
             crn: "1"
           },
           {
             id: "2",
-            instructor: "Jordan Pratt",
+            room: "B162",
             start: "2018-09-12T13:30",
             end: "2018-09-12T14:20",
             crn: "2"
@@ -81,46 +85,18 @@ describe("should be empty", () => {
     };
 
     expect(
-      instructorDoubleBookingIssueDetector.warnings(dummySchedule)
-    ).toEqual([]);
-  });
-
-  test("when TBA is involved, even if time overlaps", () => {
-    let dummySchedule = {
-      events: function() {
-        return [{
-            id: "1",
-            instructor: "TBA",
-            start: "2018-09-12T13:30",
-            end: "2018-09-12T14:20",
-            crn: "1"
-          },
-          {
-            id: "2",
-            instructor: "TBA",
-            start: "2018-09-12T13:30",
-            end: "2018-09-12T14:20",
-            crn: "2"
-          }
-        ];
-      }
-    };
-
-    expect(
-      instructorDoubleBookingIssueDetector.warnings(dummySchedule)
+      roomDoubleBookingIssueDetector.warnings(dummySchedule)
     ).toEqual([]);
   });
 });
 
 describe("should have one conflict", () => {
-  test("when the schedule has two events with one instructor and times overlap", () => {
+  test("when the schedule has two events with same room but times overlap", () => {
     let dummySchedule = {
       events: function() {
         return [{
             id: "1",
-            instructor: "Namrata Khemka",
-            username: "nkhemka",
-            room: "T235",
+            room: "B107",
             course: "COMP1501",
             section: "001",
             start: "2018-09-10T13:30",
@@ -132,11 +108,11 @@ describe("should have one conflict", () => {
           },
           {
             id: "2",
-            instructor: "Namrata Khemka",
-            username: "nkhemka",
-            room: "T235",
+            instructor: "Jordan Pratt",
+            username: "jpratt",
+            room: "B107",
             course: "COMP1501",
-            section: "001",
+            section: "002",
             start: "2018-09-10T13:30",
             end: "2018-09-10T14:20",
             crn: "43139",
@@ -148,8 +124,8 @@ describe("should have one conflict", () => {
       }
     };
     expect(
-      instructorDoubleBookingIssueDetector.warnings(dummySchedule)
-    ).toMatchObject([{ desc: expect.stringMatching(/Namrata Khemka/) }]);
+      roomDoubleBookingIssueDetector.warnings(dummySchedule)
+    ).toMatchObject([{ desc: expect.stringMatching(/B107/) }]);
   });
 
 

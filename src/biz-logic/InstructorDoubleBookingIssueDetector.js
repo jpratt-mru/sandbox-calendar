@@ -60,7 +60,7 @@ let conflictDescriptionFor = function(event) {
   let dayOfWeek = moment(event.start).format("dddd");
   return {
     crns: [event.crn, this.crn].sort().join('.'),
-    desc: `${event.instructor} has a time conflict on ${dayOfWeek} with ${event.course}-${event.section} and ${this.course}-${this.section}`
+    desc: `${event.instructor} has a time conflict on ${dayOfWeek}s between ${event.course}-${event.section} and ${this.course}-${this.section}`
   };
 };
 
