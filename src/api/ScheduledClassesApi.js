@@ -183,7 +183,7 @@ const scheduledClasses = [{
     course: "COMP1501",
     section: "503",
     start: "2018-09-11T09:30",
-    end: "2018-09-11T10:20",
+    end: "2018-09-11T10:31",
     crn: "43147",
     get title() {
       return `${this.course}-${this.section} [${this.username}]\n${this.room}`;
