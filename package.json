@@ -1,12 +1,12 @@
 {
   "name": "macocalendar",
   "version": "1.0.0",
-  "description":
-    "Churns through Scheduling spreadsheets and Schedule of Classes HTML dumps to help visualize room schedules and to catch any problems with double-bookings of instructors/rooms or room capacity issues.",
+  "description": "Churns through Scheduling spreadsheets and Schedule of Classes HTML dumps to help visualize room schedules and to catch any problems with double-bookings of instructors/rooms or room capacity issues.",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
     "fullcalendar": "3.9.0",
+    "html2canvas": "^1.0.0-alpha.12",
     "jest": "22.4.3",
     "jquery": "3.3.1",
     "lodash": "4.17.10",

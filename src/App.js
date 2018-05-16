@@ -45,8 +45,7 @@ class App extends Component {
   }
 
   handleFilterTextChange(filterText) {
-    this.setState(
-      {
+    this.setState({
         filterText: filterText
       },
       this.filterClassroomEvents
