@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "../../styles/fullcalendar.min.css";
+import "./calendar.css";
 
 
 import $ from "jquery";
