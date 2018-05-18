@@ -1,3 +1,7 @@
 .warning {
-  background-color: red;
+    background-color: red;
+    margin: 5px;
+    font-size: 0.8em;
+    border-radius: 20px;
+    font-weight: bolder;
 }

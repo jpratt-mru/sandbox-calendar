@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-class SearchBar extends Component {
+class OrSearchBar extends Component {
   constructor(props) {
     super(props);
 
@@ -8,7 +8,7 @@ class SearchBar extends Component {
   }
 
   handleFilterTextChange(e) {
-    this.props.onFilterTextChange(e.target.value);
+    this.props.onOrFilterTextChange(e.target.value);
   }
 
   render() {
@@ -19,11 +19,11 @@ class SearchBar extends Component {
             id="filter-terms"
             className="mdl-textfield__input"
             type="text"
-            value={this.props.filterText}
+            value={this.props.orFilterText}
             onChange={this.handleFilterTextChange}
           />
           <label className="mdl-textfield__label" htmlFor="filter-terms">
-            Filter...
+            OR Filter...
           </label>
         </div>
       </form>
@@ -31,4 +31,4 @@ class SearchBar extends Component {
   }
 }
 
-export default SearchBar;
+export default OrSearchBar;

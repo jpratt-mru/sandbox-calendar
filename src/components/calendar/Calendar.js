@@ -36,8 +36,8 @@ const CALENDAR_SETTINGS = {
   displayEventTime: false,
   defaultView: "agenda",
   visibleRange: {
-    start: "2018-09-10",
-    end: "2018-09-15"
+    start: "2019-01-07",
+    end: "2019-01-12"
   },
   columnHeaderFormat: "ddd",
   slotDuration: "00:30:00",
@@ -47,7 +47,7 @@ const CALENDAR_SETTINGS = {
   allDaySlot: false,
   nowIndicator: false,
   header: {
-    left: "title",
+    left: "",
     center: "",
     right: ""
   }

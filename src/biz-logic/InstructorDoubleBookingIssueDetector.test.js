@@ -1,4 +1,4 @@
-var InstructorDoubleBookingIssueDetector = require("./InstructorDoubleBookingIssueDetector");
+let InstructorDoubleBookingIssueDetector = require("./InstructorDoubleBookingIssueDetector");
 
 const instructorDoubleBookingIssueDetector = new InstructorDoubleBookingIssueDetector();
 

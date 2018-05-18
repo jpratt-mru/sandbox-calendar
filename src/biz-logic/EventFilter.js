@@ -8,6 +8,14 @@ EventFilter.prototype.eventMatchesFilterText = function(event, filterText) {
   return filterTextMatchesAtLeastOnePropertyValue(event, filterText);
 };
 
+EventFilter.prototype.eventMatchesAnyFilterText = function(event, filterText) {
+  if (!event) return false;
+
+  if (isEmpty(filterText)) return true;
+
+  return filterTextMatchesAtLeastOnePropertyValueOr(event, filterText);
+};
+
 let isEmpty = function(text) {
   return !text || text.trim().length === 0;
 };
@@ -16,6 +24,14 @@ let filterTextMatchesAtLeastOnePropertyValue = function(event, filterText) {
   let filters = split(filterText);
 
   return filters.every(filter =>
+    filterFoundInAtLeastOnePropertyValue(event, filter)
+  );
+};
+
+let filterTextMatchesAtLeastOnePropertyValueOr = function(event, filterText) {
+  let filters = split(filterText);
+
+  return filters.some(filter =>
     filterFoundInAtLeastOnePropertyValue(event, filter)
   );
 };
