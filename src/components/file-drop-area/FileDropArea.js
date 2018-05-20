@@ -2,11 +2,14 @@ import React from "react";
 import XLSX from 'xlsx';
 import Dropzone from 'react-dropzone';
 import CourseStartAndEndCalculator from '../../biz-logic/CourseStartAndEndCalculator';
+import CourseFactory from "../../biz-logic/CourseFactory";
+import RowCleanerFactory from "../../biz-logic/RowCleanerFactory";
 import './file-drop-area.css';
 
 const moment = require("moment");
 const courseStartAndEndCalculator = new CourseStartAndEndCalculator();
-
+const courseFactory = new CourseFactory().create("winter-2019-format");
+const spreadsheetRowCleaner = new RowCleanerFactory().create("winter-2019-format");
 const divStyle = {
 
 
@@ -23,6 +26,7 @@ function onDrop(props, acceptedFiles, rejectedFiles) {
             let fileAsBinaryString = reader.result;
             if (!rABS) fileAsBinaryString = new Uint8Array(fileAsBinaryString);
             var workbook = XLSX.read(fileAsBinaryString, { type: rABS ? 'binary' : 'array' });
+            const courseRows = spreadsheetRowCleaner.clean(workbook);
 
             const macoWorksheet = workbook.Sheets["MACO"];
             const worksheetAsText = XLSX.utils.sheet_to_json(macoWorksheet);
@@ -30,6 +34,8 @@ function onDrop(props, acceptedFiles, rejectedFiles) {
 
             let id = 1;
             filteredOne.forEach(function(row, index, array) {
+                // let courseFactory = CourseFactory.new("winter-2019-format");
+                // let course  = courseFactory.createFrom(spreadsheetRow);
                 let course = {};
                 course["id"] = id++;
                 if (row.hasOwnProperty("__EMPTY")) {
@@ -86,21 +92,6 @@ function onDrop(props, acceptedFiles, rejectedFiles) {
             console.log(courses);
 
             props.handleDrop(courses);
-            /*
-                         let semesterSchedule = {
-                             events: function() { return courses; }
-                         };
-                         let warningBuilder = this.props.warningBuilder;
-                         warningBuilder.add("RoomCapacityIssueDetector");
-                         warningBuilder.add("RoomDoubleBookingIssueDetector");
-                         warningBuilder.add("InstructorDoubleBookingIssueDetector");
-                         let warnings = warningBuilder.warningsFor(semesterSchedule);
-
-                         this.setState({ warningList: warnings });
-                         */
-            // console.log(workbook);
-            // var blob = new Blob([worksheetAsText], { type: "application/json;charset=utf-8" });
-            // FileSaver.saveAs(blob, "calAsJSON.json");
         };
         reader.onabort = () => console.log('file reading was aborted');
         reader.onerror = () => console.log('file reading has failed');
