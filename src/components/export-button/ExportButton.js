@@ -13,7 +13,7 @@ function exportCalendar(events) {
 }
 
 function ExportButton(props) {
-  const filteredEvents = props.filteredClassroomEvents;
+  const filteredEvents = props.filteredClassEvents;
   return (
     <div className="mdl-cell"> 
       <button className="mdl-button mdl-js-button mdl-button--raised" name="button" onClick={(e) => exportCalendar(filteredEvents, e)}>Download Current Calendar</button>

@@ -1,7 +1,9 @@
-var RoomsApi = (module.exports = function() {
+const RoomsApi = (module.exports = function() {
   this.capacities = new Map();
 
-  KNOWN_ROOMS.forEach(room => this.capacities.set(room.id, room.studentCapacity));
+  KNOWN_ROOMS.forEach(room => {
+    this.capacities.set(room.id, room.studentCapacity);
+  });
 });
 
 RoomsApi.prototype.capacity = function(roomName) {

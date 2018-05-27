@@ -8,99 +8,129 @@ import Title from "./components/title/Title";
 import WarningBuilder from "./biz-logic/WarningBuilder";
 import SemesterSchedule from './biz-logic/SemesterSchedule';
 
-
-
-
+const eventFilter = new EventFilter();
+const ANDfilter = eventFilter.eventMatchesAllFilterText;
+const ORfilter = eventFilter.eventMatchesAnyFilterText;
 
 class App extends Component {
+
   constructor(props) {
     super(props);
-    //const api = new ScheduledClassesApi();
-    //let eventsToDisplay = api.classes;
-    let semesterSchedule = new SemesterSchedule();
-    let eventsToDisplay = semesterSchedule.events();
-    let warningBuilder = new WarningBuilder();
+
+    const semesterSchedule = new SemesterSchedule();
+    const warningBuilder = new WarningBuilder();
+
+
     warningBuilder.add("RoomCapacityIssueDetector");
     warningBuilder.add("RoomDoubleBookingIssueDetector");
     warningBuilder.add("InstructorDoubleBookingIssueDetector");
-    let warnings = warningBuilder.warningsFor(semesterSchedule);
+
+    const initialClassEvents = semesterSchedule.events();
+    const warnings = warningBuilder.warningsFor(semesterSchedule);
+
     this.state = {
       orFilterText: "",
       andFilterText: "",
-      allClassroomEvents: eventsToDisplay,
-      filteredClassroomEvents: eventsToDisplay,
+      classEvents: initialClassEvents,
+      filteredClassEvents: initialClassEvents,
       warningList: warnings,
       warningBuilder: warningBuilder,
-      title: "default"
+      firstMonday: ""
     };
 
-    this.filterClassroomEvents = this.filterClassroomEvents.bind(this);
-    this.filteredEvents = this.filteredEvents.bind(this);
+
     this.handleAndFilterTextChange = this.handleAndFilterTextChange.bind(this);
     this.handleOrFilterTextChange = this.handleOrFilterTextChange.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
+    this.handleFileDrop = this.handleFileDrop.bind(this);
   }
 
-  title(courses) {
-    const aCourse = courses[0];
-    const aCourseDate = aCourse.start;
-    const year = aCourseDate.split("-")[0];
-    let month = aCourseDate.split("-")[1];
-
-    if (month === "01") {
-      month = "WINTER";
-    }
-    else if (month === "09") {
-      month = "FALL";
-    }
-    return year + "-" + month;
+  /**
+   * Clears the filter boxes and empties out the class events.
+   */
+  clearScreen() {
+    this.setState({ classEvents: [] });
+    this.setState({ filteredClassEvents: [] });
+    this.setState({ orFilterText: "" });
+    this.setState({ andFilterText: "" });
   }
 
-  handleDrop(courses) {
-    this.setState({ allClassroomEvents: courses });
-    this.setState({ filteredClassroomEvents: courses });
+  /**
+   * When a file is dropped in the target area, we need to clear the screen,
+   * load the classes from the file into state, and display any new warnings
+   * associated with the classes in the file.
+   * 
+   * Called from the FileDropArea component.
+   * 
+   * @param {array} classes - The classes from the dropped file.
+   */
+  handleFileDrop(classes) {
+    this.clearScreen();
+
+    this.setState({ classEvents: classes });
+    this.setState({ filteredClassEvents: classes });
+
+    // TODO: this needs to be a "real" SemesterSchedule eventually
     let semesterSchedule = {
-      events: function() { return courses; }
+      events: function() { return classes; }
     };
-    let warnings = this.state.warningBuilder.warningsFor(semesterSchedule);
+
+    const warnings = this.state.warningBuilder.warningsFor(semesterSchedule);
     this.setState({ warningList: warnings });
-    this.setState({ title: this.title(courses) });
   }
 
-  filteredEvents() {
-    const eventFilter = new EventFilter();
-    const allEvents = this.state.allClassroomEvents;
+  /**
+   * Return all class events filtered with a given filter.
+   * 
+   * For example if you have an AND filter going on and the filter text
+   * is "B107 jordan", then all class events where the room is B107 and
+   * instructor has a name of "jordan" would be included.
+   * 
+   * @param {function} filterFunction - The function used to filter class events.
+   * @param {string} filterText - The text currently in the filter input.
+   * @return {array} All events that meet the filter.
+   */
+  eventsFilteredWith(filterFunction, filterText) {
+    const allClassEvents = this.state.classEvents;
+
+    return allClassEvents.filter(event => filterFunction(event, filterText));
+  }
+
+  /**
+   * Return all class events that meet an AND filter.
+   * 
+   * @return {array} All events that have all of the filter text terms in them.
+   */
+  eventsFilteredWithAND() {
     const filterText = this.state.andFilterText;
-
-    return allEvents.filter(event =>
-      eventFilter.eventMatchesFilterText(event, filterText)
-    );
+    return this.eventsFilteredWith(ANDfilter, filterText);
   }
 
-  filteredEventsWithOr() {
-    const eventFilter = new EventFilter();
-    const allEvents = this.state.allClassroomEvents;
+  /**
+   * Return all class events that meet an OR filter.
+   * 
+   * @return {array} All events that have at least one of the filter text terms in them.
+   */
+  eventsFilteredWithOR() {
     const filterText = this.state.orFilterText;
-
-    return allEvents.filter(event =>
-      eventFilter.eventMatchesAnyFilterText(event, filterText)
-    );
+    return this.eventsFilteredWith(ORfilter, filterText);
   }
 
-  filterClassroomEvents() {
-    this.setState({ filteredClassroomEvents: this.filteredEvents() });
+  filterClassEventsWithAND() {
+    this.setState({ filteredClassEvents: this.eventsFilteredWithAND() });
   }
 
-  filterClassroomEventsWithOr() {
-    this.setState({ filteredClassroomEvents: this.filteredEventsWithOr() });
+  filterClassEventsWithOR() {
+    this.setState({ filteredClassEvents: this.eventsFilteredWithOR() });
   }
 
   handleAndFilterTextChange(filterText) {
+    // clear the other text box first
     this.setState({ orFilterText: "" });
+
     this.setState({
         andFilterText: filterText
       },
-      this.filterClassroomEvents
+      this.filterClassEventsWithAND
     );
   }
 
@@ -109,29 +139,32 @@ class App extends Component {
     this.setState({
         orFilterText: filterText
       },
-      this.filterClassroomEventsWithOr
+      this.filterClassEventsWithOR
     );
   }
 
   render() {
+    const filteredClassEvents = this.state.filteredClassEvents;
     return (
       <div id="containers" className="mdl-grid">
-      <FileDropArea
-        handleDrop={this.handleDrop}
+        <FileDropArea
+          handleFileDrop={ this.handleFileDrop }
+        /> 
+        <ExportButton 
+          filteredClassEvents = { filteredClassEvents }
+        /> 
+        <Title 
+          classEvents = { filteredClassEvents }
         />
-        <ExportButton filteredClassroomEvents={this.state.filteredClassroomEvents}/>
-        <Title title={this.state.title} />
-
-        
         <Calendar
-          filteredClassroomEvents={this.state.filteredClassroomEvents}
+          filteredClassEvents={ filteredClassEvents }
         />
         <SideBar
-          orFilterText={this.state.orFilterText}
-          andFilterText={this.state.andFilterText}
-          onAndFilterTextChange={this.handleAndFilterTextChange}
-          onOrFilterTextChange={this.handleOrFilterTextChange}
-          warnings={this.state.warningList}
+          orFilterText={ this.state.orFilterText }
+          andFilterText={ this.state.andFilterText }
+          onAndFilterTextChange={ this.handleAndFilterTextChange }
+          onOrFilterTextChange={ this.handleOrFilterTextChange }
+          warnings={ this.state.warningList }
         />
       </div>
     );

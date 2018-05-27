@@ -244,7 +244,7 @@ const macoWorksheetRows = [{
 ];
 
 const cleanedRows = clean(macoWorksheetRows);
-console.log(cleanedRows);
+// console.log(cleanedRows);
 
 test("foo", () => {
     expect(false).toBeTruthy();

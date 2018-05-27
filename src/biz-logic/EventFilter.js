@@ -1,6 +1,6 @@
 let EventFilter = (module.exports = function() {});
 
-EventFilter.prototype.eventMatchesFilterText = function(event, filterText) {
+EventFilter.prototype.eventMatchesAllFilterText = function(event, filterText) {
   if (!event) return false;
 
   if (isEmpty(filterText)) return true;
