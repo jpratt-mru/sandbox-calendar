@@ -1,5 +1,5 @@
 const Winter2019FormatFactory = require("./Winter2019FormatFactory");
-const createClass = new Winter2019FormatFactory().createClass;
+const createSection = new Winter2019FormatFactory().createSection;
 
 const oneRow = {
     'Schedule of Classes - Winter 2019': 'MACO',
@@ -24,15 +24,15 @@ const oneRow = {
     __EMPTY_21: '100'
 };
 
-const createdClass = createClass(oneRow);
+const createdSection = createSection(oneRow);
 
 test("it correctly creates a course attribute", () => {
-    expect(createdClass).toHaveProperty('course', 'COMP1103');
+    expect(createdSection).toHaveProperty('course', 'COMP1103');
 });
 
 describe("instructor attributes", () => {
     test("are correctly created if a normal name exists in the spreadsheet row", () => {
-        expect(createdClass).toHaveProperty('instructor', 'Jordan Pratt');
+        expect(createdSection).toHaveProperty('instructor', 'Jordan Pratt');
     });
 
     test("become TBA if the first name in the spreadsheet row begins with tba", () => {
@@ -41,8 +41,8 @@ describe("instructor attributes", () => {
             __EMPTY_18: 'TBA001',
             __EMPTY_19: 'COMP',
         };
-        let createdClass = createClass(tbaRow);
-        expect(createdClass).toHaveProperty('instructor', 'TBA');
+        let createdSection = createSection(tbaRow);
+        expect(createdSection).toHaveProperty('instructor', 'TBA');
     });
 
     test("become TBA if the first name in the spreadsheet row doesn't exist", () => {
@@ -50,44 +50,44 @@ describe("instructor attributes", () => {
             __EMPTY: 'COMP1103',
             __EMPTY_19: 'COMP'
         };
-        let createdClass = createClass(tbaRow);
-        expect(createdClass).toHaveProperty('instructor', 'TBA');
+        let createdSection = createSection(tbaRow);
+        expect(createdSection).toHaveProperty('instructor', 'TBA');
     });
 
 });
 
 describe("username attributes", () => {
     test("are correctly created if a normal name exists in the spreadsheet row", () => {
-        expect(createdClass).toHaveProperty('username', 'jpratt');
+        expect(createdSection).toHaveProperty('username', 'jpratt');
     });
 
     test("become TBA if the first name in the spreadsheet row begins with tba", () => {
-        let tbaRow = {
-            __EMPTY: 'COMP1103',
-            __EMPTY_18: 'TBA001',
-            __EMPTY_19: 'COMP',
-        };
-        let createdClass = createClass(tbaRow);
-        expect(createdClass).toHaveProperty('username', 'TBA');
+        let tbaRow = JSON.parse(JSON.stringify(oneRow));
+        tbaRow["__EMPTY_18"] = 'TBA001';
+        tbaRow["__EMPTY_19"] = 'COMP';
+
+        let createdSection = createSection(tbaRow);
+        expect(createdSection).toHaveProperty('username', 'TBA');
     });
 
     test("become TBA if the first name in the spreadsheet row doesn't exist", () => {
-        let tbaRow = {
-            __EMPTY: 'COMP1103',
-            __EMPTY_19: 'COMP'
-        };
-        let createdClass = createClass(tbaRow);
-        expect(createdClass).toHaveProperty('username', 'TBA');
+        // __EMPTY_18 is the first name row
+        let tbaRow = JSON.parse(JSON.stringify(oneRow));
+        tbaRow["__EMPTY_19"] = 'COMP';
+        delete tbaRow["__EMPTY_18"];
+
+        let createdSection = createSection(tbaRow);
+        expect(createdSection).toHaveProperty('username', 'TBA');
     });
 
 });
 
 describe("room attributes", () => {
     test("are the room name if the spreadsheet row has a room", () => {
-        expect(createdClass).toHaveProperty('room', 'B217');
+        expect(createdSection).toHaveProperty('room', 'B217');
     });
 });
 
 test("have a correct section number", () => {
-    expect(createdClass).toHaveProperty('section', '001');
+    expect(createdSection).toHaveProperty('section', '001');
 });
