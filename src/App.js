@@ -71,7 +71,7 @@ class App extends Component {
 
     // TODO: this needs to be a "real" SemesterSchedule eventually
     let semesterSchedule = {
-      events: function() { return classes; }
+      events() { return classes; }
     };
 
     const warnings = this.state.warningBuilder.warningsFor(semesterSchedule);
