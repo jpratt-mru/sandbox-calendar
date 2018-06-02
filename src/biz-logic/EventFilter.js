@@ -43,6 +43,7 @@ let split = function(text) {
 
 let filterFoundInAtLeastOnePropertyValue = function(event, filter) {
   for (let property in event) {
+    if (property === "id") continue;
     let lowerCasePropertyValue = String(event[property]).toLowerCase();
     let lowerCaseFilter = filter.toLowerCase();
 

@@ -7,7 +7,8 @@ const EVENT_TO_FILTER = {
   username: "jpratt",
   room: "B107",
   start: "2018-09-14T12:30",
-  end: "2018-09-14T13:20"
+  end: "2018-09-14T13:20",
+  id: 17
 };
 
 let expectedResult;
@@ -15,7 +16,7 @@ let actualResult;
 let filterText;
 
 let shouldBeFalse = function(filterText) {
-  actualResult = eventFilter.eventMatchesFilterText(
+  actualResult = eventFilter.eventMatchesAllFilterText(
     EVENT_TO_FILTER,
     filterText
   );
@@ -24,7 +25,7 @@ let shouldBeFalse = function(filterText) {
 };
 
 let shouldBeTrue = function(filterText) {
-  actualResult = eventFilter.eventMatchesFilterText(
+  actualResult = eventFilter.eventMatchesAllFilterText(
     EVENT_TO_FILTER,
     filterText
   );
@@ -102,7 +103,7 @@ describe("reports no match", () => {
   test("when using a null event", () => {
     let no_such_event;
     expect(
-      eventFilter.eventMatchesFilterText(no_such_event, "bar")
+      eventFilter.eventMatchesAllFilterText(no_such_event, "bar")
     ).toBeFalsy();
   });
 
@@ -121,4 +122,8 @@ describe("reports no match", () => {
   test("when the text has one item that matches followed by one that doesn't", () => {
     shouldBeFalse("jpratt x107");
   });
+});
+
+test("doesn't report a match just because the id matches the search term", () => {
+  shouldBeFalse("17");
 });
