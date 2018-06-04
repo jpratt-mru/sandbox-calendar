@@ -36,20 +36,18 @@ describe("instructor attributes", () => {
     });
 
     test("become TBA if the first name in the spreadsheet row begins with tba", () => {
-        let tbaRow = {
-            __EMPTY: 'COMP1103',
-            __EMPTY_18: 'TBA001',
-            __EMPTY_19: 'COMP',
-        };
+        let tbaRow = JSON.parse(JSON.stringify(oneRow));
+        tbaRow["__EMPTY_18"] = 'TBA001';
+        tbaRow["__EMPTY_19"] = 'COMP';
         let createdSection = createSection(tbaRow);
         expect(createdSection).toHaveProperty('instructor', 'TBA');
     });
 
     test("become TBA if the first name in the spreadsheet row doesn't exist", () => {
-        let tbaRow = {
-            __EMPTY: 'COMP1103',
-            __EMPTY_19: 'COMP'
-        };
+        // __EMPTY_18 is the first name row
+        let tbaRow = JSON.parse(JSON.stringify(oneRow));
+        tbaRow["__EMPTY_19"] = 'COMP';
+        delete tbaRow["__EMPTY_18"];
         let createdSection = createSection(tbaRow);
         expect(createdSection).toHaveProperty('instructor', 'TBA');
     });
