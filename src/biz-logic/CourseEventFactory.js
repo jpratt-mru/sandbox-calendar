@@ -5,12 +5,12 @@
  * on the year/season.
  */
 
-const Winter2019FormatFactory = require("./Winter2019FormatFactory");
+const Winter2019CourseEventFactory = require("./Winter2019CourseEventFactory");
 
-let CourseFactory = (module.exports = function() {});
+let CourseEventFactory = (module.exports = function() {});
 
-CourseFactory.prototype.create = function(type) {
+CourseEventFactory.prototype.create = function(type) {
     if (type === "winter-2019-format")
-        return new Winter2019FormatFactory();
+        return new Winter2019CourseEventFactory();
     return {}; // TODO: eventually want to return some sort of NullObject pattern thingie
 };

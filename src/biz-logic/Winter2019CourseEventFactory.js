@@ -1,11 +1,11 @@
-let CourseStartAndEndCalculator = require('./CourseStartAndEndCalculator');
-let Winter2019FormatFactory = (module.exports = function() {});
+const CourseStartAndEndCalculator = require('./CourseStartAndEndCalculator');
+const Winter2019CourseEventFactory = (module.exports = function() {});
 
 const moment = require("moment");
 const courseStartAndEndCalculator = new CourseStartAndEndCalculator();
 
-Winter2019FormatFactory.prototype.createSection = function(row, id) {
-    let theClass = {
+Winter2019CourseEventFactory.prototype.newEvent = function(row, id) {
+    let theEvent = {
         id: id,
         course: course(row),
         instructor: instructor(row),
@@ -16,9 +16,9 @@ Winter2019FormatFactory.prototype.createSection = function(row, id) {
         start: start(row),
         end: end(row)
     };
-    theClass.crn = theClass.course + theClass.section;
-    theClass.title = `${theClass.course}-${theClass.section} [${theClass.username}]\n${theClass.room}`;
-    return theClass;
+    theEvent.crn = theEvent.course + theEvent.section;
+    theEvent.title = `${theEvent.course}-${theEvent.section} [${theEvent.username}]\n${theEvent.room}`;
+    return theEvent;
 };
 
 const course = function(row) {

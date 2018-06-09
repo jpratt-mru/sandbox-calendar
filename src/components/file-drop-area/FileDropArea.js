@@ -1,12 +1,12 @@
 import React from "react";
 import XLSX from 'xlsx';
 import Dropzone from 'react-dropzone';
-import CourseFactory from "../../biz-logic/CourseFactory";
+import CourseEventFactory from "../../biz-logic/CourseEventFactory";
 import RowCleanerFactory from "../../biz-logic/RowCleanerFactory";
 
 import './file-drop-area.css';
 
-const courseFactory = new CourseFactory().create("winter-2019-format");
+const courseEventFactory = new CourseEventFactory().create("winter-2019-format");
 const spreadsheetRowCleaner = new RowCleanerFactory().create("winter-2019-format");
 
 /**
@@ -46,7 +46,7 @@ function processDroppedFile(file, props) {
 
         let id = 1;
         cleanedSpreadsheetRows.forEach(row => {
-            let section = courseFactory.createSection(row, id);
+            let section = courseEventFactory.newEvent(row, id);
             sections.push(section);
             id++;
         });
