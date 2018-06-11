@@ -50,7 +50,7 @@ EventFilter.prototype.eventMatchesAnyFilterText = function(event, filterText) {
 
 
 let isEmpty = function(text) {
-  return !text || text.trim().length === 0;
+  return !text || String(text).trim().length === 0;
 };
 
 
@@ -78,7 +78,7 @@ let filterTextPartiallyMatchesAtLeastOnePropertyValue = function(event, filterTe
  * 
  */
 let split = function(text) {
-  return text.split(/\s+/).filter(token => token.length > 0);
+  return String(text).split(/\s+/).filter(token => token.length > 0);
 };
 
 
@@ -100,5 +100,5 @@ let filterFoundInAtLeastOnePropertyValue = function(event, filter) {
 
 
 let contains = function(a, b) {
-  return a.toLowerCase().indexOf(b.toLowerCase()) !== -1;
+  return String(a).toLowerCase().indexOf(String(b).toLowerCase()) !== -1;
 };

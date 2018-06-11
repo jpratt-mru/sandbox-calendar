@@ -127,3 +127,7 @@ describe("reports no match", () => {
 test("doesn't report a match just because the id matches the search term", () => {
   shouldBeFalse("17");
 });
+
+test("doesn't blow up if given a non-text", () => {
+  shouldBeFalse(17);
+});
