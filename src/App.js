@@ -6,7 +6,17 @@ import FileDropArea from "./components/file-drop-area/FileDropArea";
 import EventFilter from "./biz-logic/EventFilter";
 import Title from "./components/title/Title";
 import WarningBuilder from "./biz-logic/WarningBuilder";
-import SemesterSchedule from './biz-logic/SemesterSchedule';
+import ColorDecorator from "./biz-logic/ColorDecorator";
+// import SemesterSchedule from './biz-logic/SemesterSchedule';
+import XLSX from 'xlsx';
+
+import CourseEventFactory from "./biz-logic/CourseEventFactory";
+import RowCleanerFactory from "./biz-logic/RowCleanerFactory";
+
+
+const courseEventFactory = new CourseEventFactory().create("winter-2019-format");
+const spreadsheetRowCleaner = new RowCleanerFactory().create("winter-2019-format");
+
 
 const eventFilter = new EventFilter();
 const ANDfilter = eventFilter.eventMatchesAllFilterText;
@@ -17,7 +27,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    const semesterSchedule = new SemesterSchedule();
+    // const semesterSchedule = new SemesterSchedule();
     const warningBuilder = new WarningBuilder();
 
 
@@ -25,15 +35,15 @@ class App extends Component {
     warningBuilder.add("RoomDoubleBookingIssueDetector");
     warningBuilder.add("InstructorDoubleBookingIssueDetector");
 
-    const initialClassEvents = semesterSchedule.events();
-    const warnings = warningBuilder.warningsFor(semesterSchedule);
+    // const initialClassEvents = semesterSchedule.events();
+    // const warnings = warningBuilder.warningsFor(semesterSchedule);
 
     this.state = {
       orFilterText: "",
       andFilterText: "",
-      classEvents: initialClassEvents,
-      filteredClassEvents: initialClassEvents,
-      warningList: warnings,
+      classEvents: [],
+      filteredClassEvents: [],
+      warningList: [],
       warningBuilder: warningBuilder,
       firstMonday: ""
     };
@@ -42,6 +52,34 @@ class App extends Component {
     this.handleAndFilterTextChange = this.handleAndFilterTextChange.bind(this);
     this.handleOrFilterTextChange = this.handleOrFilterTextChange.bind(this);
     this.handleFileDrop = this.handleFileDrop.bind(this);
+
+
+  }
+
+  componentDidMount() {
+    fetch("/winter-2019.xlsx")
+      .then(response => response.arrayBuffer())
+      .then(
+        (result) => {
+          let sections = [];
+
+          let data = new Uint8Array(result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const macoWorksheet = XLSX.utils.sheet_to_json(workbook.Sheets["MACO"]);
+          const cleanedSpreadsheetRows = spreadsheetRowCleaner.clean(macoWorksheet);
+
+          let id = 1;
+          cleanedSpreadsheetRows.forEach(row => {
+            let section = courseEventFactory.newEvent(row, id);
+            sections.push(section);
+            id++;
+          });
+          this.handleFileDrop(sections);
+
+        },
+        (error) => {
+          console.log("error");
+        });
   }
 
   /**
@@ -66,8 +104,9 @@ class App extends Component {
   handleFileDrop(classes) {
     this.clearScreen();
 
-    this.setState({ classEvents: classes });
-    this.setState({ filteredClassEvents: classes });
+    const coloredClassroomEvents = ColorDecorator.decoratedEvents(classes);
+    this.setState({ classEvents: coloredClassroomEvents });
+    this.setState({ filteredClassEvents: coloredClassroomEvents });
 
     // TODO: this needs to be a "real" SemesterSchedule eventually
     let semesterSchedule = {
@@ -77,6 +116,10 @@ class App extends Component {
     const warnings = this.state.warningBuilder.warningsFor(semesterSchedule);
     this.setState({ warningList: warnings });
   }
+
+
+
+
 
   /**
    * Return all class events filtered with a given filter.
