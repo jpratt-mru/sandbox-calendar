@@ -1,5 +1,13 @@
  .fc-toolbar.fc-header-toolbar {
-     display: none;
+  display: none;
 
+ }
+
+ .mathx {
+  border: 2px solid;
+ }
+
+ .compx {
+  border: 2px solid;
  }
  

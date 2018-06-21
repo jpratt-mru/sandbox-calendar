@@ -1,5 +1,9 @@
 const CourseStartAndEndCalculator = require('./CourseStartAndEndCalculator');
+// const ColorDecider = require('./ColorDecider');
+
 const Winter2019CourseEventFactory = (module.exports = function() {});
+
+
 
 const moment = require("moment");
 const courseStartAndEndCalculator = new CourseStartAndEndCalculator();
@@ -16,7 +20,11 @@ Winter2019CourseEventFactory.prototype.newEvent = function(row, id) {
         start: start(row),
         end: end(row)
     };
-    theEvent.crn = theEvent.course + theEvent.section;
+    theEvent.subject = theEvent.course.slice(0, 4);
+    theEvent.courseNumber = theEvent.course.slice(4);
+
+
+    theEvent.crn = `${theEvent.subject}.${theEvent.courseNumber}.${theEvent.section}`;
     theEvent.title = `${theEvent.course}-${theEvent.section} [${theEvent.username}]\n${theEvent.room}`;
     return theEvent;
 };

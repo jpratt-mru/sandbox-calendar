@@ -54,7 +54,7 @@ ColorDecorator.decoratedEvents = function(events) {
 
     });
 
-    return events;
+    return coloredEvents;
     // theEvent.color = ColorDecider.backgroundColor(theEvent.subject, theEvent.courseNumber, theEvent.section);
     // theEvent.textColor = ColorDecider.textColor(theEvent.subject, theEvent.courseNumber, theEvent.section);
 

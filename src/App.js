@@ -57,7 +57,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("/winter-2019.xlsx")
+    fetch(process.env.PUBLIC_URL + "/raw-data/winter-2019.xlsx")
       .then(response => response.arrayBuffer())
       .then(
         (result) => {
