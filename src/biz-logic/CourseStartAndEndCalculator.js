@@ -93,14 +93,19 @@ const firstDayOfClassesInFirstFullWeek = function(firstMondayOfFirstFullWeek, ta
 let dayOfWeekAsNumber = function(dayOfWeek) {
     switch (dayOfWeek) {
         case "Monday":
+        case "M":
             return 1;
         case "Tuesday":
+        case "T":
             return 2;
         case "Wednesday":
+        case "W":
             return 3;
         case "Thursday":
+        case "R":
             return 4;
         case "Friday":
+        case "F":
             return 5;
         case "Saturday":
             return 6;

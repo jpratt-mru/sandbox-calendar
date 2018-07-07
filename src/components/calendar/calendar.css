@@ -3,8 +3,12 @@
 
  }
 
- .mathx {
-  border: 2px solid;
+ .fc-title {
+  font-size: 80%
+ }
+
+ .math {
+  border: 20px solid;
  }
 
  .compx {

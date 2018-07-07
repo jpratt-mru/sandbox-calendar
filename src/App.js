@@ -9,18 +9,25 @@ import WarningBuilder from "./biz-logic/WarningBuilder";
 import ColorDecorator from "./biz-logic/ColorDecorator";
 // import SemesterSchedule from './biz-logic/SemesterSchedule';
 import XLSX from 'xlsx';
+import cheerio from 'cheerio';
+import HtmlParserFactory from "./biz-logic/HtmlParserFactory";
 
 import CourseEventFactory from "./biz-logic/CourseEventFactory";
 import RowCleanerFactory from "./biz-logic/RowCleanerFactory";
 
+import './styles/printrules.css';
 
 const courseEventFactory = new CourseEventFactory().create("winter-2019-format");
 const spreadsheetRowCleaner = new RowCleanerFactory().create("winter-2019-format");
+const htmlDumpParser = new HtmlParserFactory().create("fall-2018-format");
 
+const moment = require("moment");
 
 const eventFilter = new EventFilter();
 const ANDfilter = eventFilter.eventMatchesAllFilterText;
 const ORfilter = eventFilter.eventMatchesAnyFilterText;
+
+
 
 class App extends Component {
 
@@ -45,7 +52,9 @@ class App extends Component {
       filteredClassEvents: [],
       warningList: [],
       warningBuilder: warningBuilder,
-      firstMonday: ""
+      firstMonday: "",
+      semesterStart: "",
+      semesterEnd: ""
     };
 
 
@@ -56,31 +65,77 @@ class App extends Component {
 
   }
 
+  isOnMonday(event) {
+    const eventStartDate = moment(event.start);
+    return eventStartDate.day() === 1;
+  }
+
+  /**
+   * FullCalendar expects start range of agenda calendar view to
+   * be in YYYY-MM-DD format. For example, "2019-01-07".
+   */
+  rangeStart() {
+    const firstClassOnMonday = this.state.classEvents.find(event => this.isOnMonday(event));
+    return firstClassOnMonday === undefined ? "2017-09-11" : moment(firstClassOnMonday.start).format("YYYY-MM-DD");
+  }
+
+  /**
+   * FullCalendar expects end range of agenda calendar view to
+   * be in YYYY-MM-DD format. For example, "2019-01-11".
+   */
+  rangeEnd() {
+    return moment(this.rangeStart()).add(5, 'd').format("YYYY-MM-DD");
+  }
+
   componentDidMount() {
-    fetch(process.env.PUBLIC_URL + "/raw-data/winter-2019.xlsx")
-      .then(response => response.arrayBuffer())
+    fetch(process.env.PUBLIC_URL + "/raw-data/fall-2018.html")
+      .then(response => response.text())
       .then(
         (result) => {
-          let sections = [];
+          let rawRows = [];
+          // let sections = [];
+          // console.log("result", result);
+          const $ = cheerio.load(result);
 
-          let data = new Uint8Array(result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const macoWorksheet = XLSX.utils.sheet_to_json(workbook.Sheets["MACO"]);
-          const cleanedSpreadsheetRows = spreadsheetRowCleaner.clean(macoWorksheet);
-
-          let id = 1;
-          cleanedSpreadsheetRows.forEach(row => {
-            let section = courseEventFactory.newEvent(row, id);
-            sections.push(section);
-            id++;
+          $('table.datadisplaytable td').each(function() {
+            rawRows.push($(this).text());
           });
-          this.handleFileDrop(sections);
+          const parsedClassroomEvents = htmlDumpParser.parse(rawRows);
+
+          this.handleFileDrop(parsedClassroomEvents);
 
         },
         (error) => {
-          console.log("error");
+          console.log("error processing scrape file");
         });
   }
+
+  /*
+    componentDidMount() {
+      fetch(process.env.PUBLIC_URL + "/raw-data/winter-2019.xlsx")
+        .then(response => response.arrayBuffer())
+        .then(
+          (result) => {
+            let sections = [];
+
+            let data = new Uint8Array(result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const macoWorksheet = XLSX.utils.sheet_to_json(workbook.Sheets["MACO"]);
+            const cleanedSpreadsheetRows = spreadsheetRowCleaner.clean(macoWorksheet);
+            let id = 1;
+            cleanedSpreadsheetRows.forEach(row => {
+              let section = courseEventFactory.newEvent(row, id);
+              sections.push(section);
+              id++;
+            });
+            this.handleFileDrop(sections);
+
+          },
+          (error) => {
+            console.log("error");
+          });
+    }
+  */
 
   /**
    * Clears the filter boxes and empties out the class events.
@@ -115,6 +170,9 @@ class App extends Component {
 
     const warnings = this.state.warningBuilder.warningsFor(semesterSchedule);
     this.setState({ warningList: warnings });
+
+    this.setState({ semesterStart: this.rangeStart() });
+    this.setState({ semesterEnd: this.rangeEnd() });
   }
 
 
@@ -201,6 +259,8 @@ class App extends Component {
         />
         <Calendar
           filteredClassEvents={ filteredClassEvents }
+          semesterStart= {this.state.semesterStart}
+          semesterEnd = {this.state.semesterEnd}
         />
         <SideBar
           orFilterText={ this.state.orFilterText }

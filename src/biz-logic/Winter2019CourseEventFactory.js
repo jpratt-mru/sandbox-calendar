@@ -25,7 +25,7 @@ Winter2019CourseEventFactory.prototype.newEvent = function(row, id) {
 
 
     theEvent.crn = `${theEvent.subject}.${theEvent.courseNumber}.${theEvent.section}`;
-    theEvent.title = `${theEvent.course}-${theEvent.section} [${theEvent.username}]\n${theEvent.room}`;
+    theEvent.title = `${theEvent.course}-${theEvent.section}\n[${theEvent.username}]\n${theEvent.room}`;
     return theEvent;
 };
 

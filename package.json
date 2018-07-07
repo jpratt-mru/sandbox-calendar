@@ -26,6 +26,8 @@
     "xlsx": "^0.12.12"
   },
   "devDependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "htmlparser2": "^3.9.2",
     "tinycolor2": "^1.4.1"
   },
   "scripts": {

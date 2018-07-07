@@ -92,13 +92,22 @@ let split = function(text) {
  * 
  */
 let filterFoundInAtLeastOnePropertyValue = function(event, filter) {
-  const { id, ...idFilteredOutEvent } = event;
+  /*
+  const { id, color, crn, ...idFilteredOutEvent } = event;
 
   const valuesInEvent = Object.keys(idFilteredOutEvent).map(k => idFilteredOutEvent[k]);
+  // console.table(valuesInEvent);
   return valuesInEvent.some(value => contains(value, filter));
+  */
+  return contains(event.searchableThings, filter);
 };
 
 
 let contains = function(a, b) {
-  return String(a).toLowerCase().indexOf(String(b).toLowerCase()) !== -1;
+  const index = String(a).toLowerCase().indexOf(String(b).toLowerCase());
+  if (index !== -1) {
+    console.log(a, " contains ", b);
+    return true;
+  }
+  return false;
 };

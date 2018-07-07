@@ -1,6 +1,24 @@
+/**
+ * We want to add some distinct-ish colour to the events so that classes
+ * can be differentiated easily.
+ * 
+ * I found a cool site (http://tools.medialab.sciences-po.fr/iwanthue/) that
+ * lets you generate different color palettes easily. So I just generated 40ish
+ * that looked different enough and went with that. (I was OK if there was
+ * overlap between MATH and COMP classes, as a user typically is just looking
+ * at classes from one or the other.)
+ * 
+ * The idea is to make a list of course numbers (the subject doesn't matter - so
+ * if you have a MATH1001 and a COMP1001, we just care about the 1001 part).
+ * Then we just say "if you're a course with the first number in the list, you
+ * get the first color in the color list; if you're a course with the 18th
+ * number in the course number list, you get the 18th color in the color list".
+ * 
+ */
+
 let ColorDecorator = (module.exports = function() {});
 
-const colors = ["#00191d",
+const colorList = ["#00191d",
     "#5d7884",
     "#2f0e00",
     "#00392c",
@@ -43,19 +61,20 @@ const colors = ["#00191d",
 ];
 
 ColorDecorator.decoratedEvents = function(events) {
-    const courseNumbers = events.map(event => event.courseNumber).filter((v, i, a) => a.indexOf(v) === i);
-
-    const coloredEvents = events.map(event => {
-        // event.borderColor = event.subject === "COMP" ? "blue" : "yellow";
-        console.log("mapping ", event.courseNumber, " to ", courseNumbers.indexOf(event.courseNumber));
-        event.color = colors[courseNumbers.indexOf(event.courseNumber)];
-
-        return event;
-
-    });
-
-    return coloredEvents;
-    // theEvent.color = ColorDecider.backgroundColor(theEvent.subject, theEvent.courseNumber, theEvent.section);
-    // theEvent.textColor = ColorDecider.textColor(theEvent.subject, theEvent.courseNumber, theEvent.section);
-
+    const courseNumberList = uniqueCourseNumbers(events);
+    return eventsWithColor(events, courseNumberList);
 };
+
+function uniqueCourseNumbers(events) {
+    return events
+        .map(event => event.courseNumber) // collection of course numbers
+        .filter((v, i, a) => a.indexOf(v) === i); // this removes duplicates
+}
+
+function eventsWithColor(events, courseNumberList) {
+    return events.map(event => {
+        const courseNumberIndex = courseNumberList.indexOf(event.courseNumber);
+        event.color = colorList[courseNumberIndex];
+        return event;
+    });
+}

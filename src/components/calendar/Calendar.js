@@ -21,39 +21,22 @@ class Calendar extends Component {
     this.eventGenerator = this.eventGenerator.bind(this);
   }
 
-  isOnMonday(event) {
-    const eventStartDate = moment(event.start);
-    return eventStartDate.day() === 1;
-  }
 
-  /**
-   * FullCalendar expects start range of agenda calendar view to
-   * be in YYYY-MM-DD format. For example, "2019-01-07".
-   */
-  rangeStart() {
-    const firstClassOnMonday = this.props.filteredClassEvents.find(event => this.isOnMonday(event));
-    return firstClassOnMonday === undefined ? "2019-01-07" : moment(firstClassOnMonday.start).format("YYYY-MM-DD");
-  }
-
-  /**
-   * FullCalendar expects end range of agenda calendar view to
-   * be in YYYY-MM-DD format. For example, "2019-01-11".
-   */
-  rangeEnd() {
-    return moment(this.rangeStart()).add(5, 'd').format("YYYY-MM-DD");
-  }
 
   adjustRange() {
+    console.log("range start", this.props.semesterStart, " to ", this.props.semesterEnd);
     $("#calendar").fullCalendar('option', 'visibleRange', {
-      start: this.rangeStart(),
-      end: this.rangeEnd()
+      start: this.props.semesterStart,
+      end: this.props.semesterEnd
     });
+
   }
 
 
   componentDidMount() {
     $("#calendar").fullCalendar(CALENDAR_SETTINGS);
     $("#calendar").fullCalendar("addEventSource", this.eventGenerator);
+    $("#calendar").fullCalendar("rerenderEvents");
   }
 
   /**
@@ -64,8 +47,10 @@ class Calendar extends Component {
    * semester).
    */
   componentDidUpdate() {
-    $("#calendar").fullCalendar("refetchEventSources", this.eventGenerator);
     this.adjustRange();
+    $("#calendar").fullCalendar("refetchEventSources", this.eventGenerator);
+
+    $("#calendar").fullCalendar("rerenderEvents");
   }
 
   /**
@@ -73,6 +58,7 @@ class Calendar extends Component {
    */
   eventGenerator(start, end, timezone, callback) {
     let eventsToDisplay = this.props.filteredClassEvents;
+    // console.table(eventsToDisplay);
     callback(eventsToDisplay);
   }
 
@@ -88,15 +74,11 @@ const CALENDAR_SETTINGS = {
   height: "auto",
   displayEventTime: false,
   defaultView: "agenda",
-  visibleRange: {
-    start: "2019-01-07",
-    end: "2019-01-12"
-  },
   columnHeaderFormat: "ddd",
   slotDuration: "00:30:00",
   slotLabelInterval: "01:00",
-  minTime: "07:00:00",
-  maxTime: "20:00:00",
+  minTime: "08:00:00",
+  maxTime: "21:00:00",
   allDaySlot: false,
   nowIndicator: false,
   header: false
