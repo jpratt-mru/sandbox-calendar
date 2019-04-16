@@ -24,10 +24,9 @@ class Calendar extends Component {
 
 
   adjustRange() {
-    console.log("range start", this.props.semesterStart, " to ", this.props.semesterEnd);
     $("#calendar").fullCalendar('option', 'visibleRange', {
-      start: this.props.semesterStart,
-      end: this.props.semesterEnd
+      start: this.props.mondayOfFirstFullWeek,
+      end: this.props.fridayOfFirstFullWeek
     });
 
   }

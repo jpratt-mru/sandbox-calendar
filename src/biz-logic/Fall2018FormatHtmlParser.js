@@ -63,6 +63,7 @@
  };
 
  const realEvent = function(almostEvent, index) {
+
   let theEvent = {
    id: index + 1,
    subject: subject(almostEvent),
@@ -83,6 +84,7 @@
   theEvent.title = `${theEvent.course}-${theEvent.section}\n[${theEvent.username}]\n${theEvent.room}`;
   theEvent.searchableThings = `${theEvent.subject} ${theEvent.courseNumber} ${theEvent.section} ${theEvent.instructor} ${theEvent.username} ${theEvent.room}`;
   theEvent.searchableThings = theEvent.searchableThings.replace(/\s/g, "");
+
   return theEvent;
 
  };
@@ -132,6 +134,7 @@
  };
 
  const room = function(row) {
+
   try {
    let roomParts = row[15].split(" ").filter(e => e.length > 0);
    return roomParts.length === 1 ? roomParts[0] : roomParts[1];

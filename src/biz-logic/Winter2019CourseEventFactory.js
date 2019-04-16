@@ -26,6 +26,8 @@ Winter2019CourseEventFactory.prototype.newEvent = function(row, id) {
 
     theEvent.crn = `${theEvent.subject}.${theEvent.courseNumber}.${theEvent.section}`;
     theEvent.title = `${theEvent.course}-${theEvent.section}\n[${theEvent.username}]\n${theEvent.room}`;
+    theEvent.searchableThings = `${theEvent.subject} ${theEvent.courseNumber} ${theEvent.section} ${theEvent.instructor} ${theEvent.username} ${theEvent.room}`;
+    theEvent.searchableThings = theEvent.searchableThings.replace(/\s/g, "");
     return theEvent;
 };
 
@@ -78,7 +80,7 @@ const sectionCapacity = function(row) {
 
 const start = function(row) {
     let startAsMoment = moment(firstDayOfClass(row), moment.HTML5_FMT.DATETIME_LOCAL);
-
+    // let startAsMoment = moment(firstDayOfClass(row), "MM-DD-YY");
     const classStartTime = row["__EMPTY_13"];
     const splitClassStartTime = classStartTime.split(":");
     const classStartHour = parseInt(splitClassStartTime[0], 10);

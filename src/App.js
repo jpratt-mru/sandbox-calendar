@@ -7,7 +7,6 @@ import EventFilter from "./biz-logic/EventFilter";
 import Title from "./components/title/Title";
 import WarningBuilder from "./biz-logic/WarningBuilder";
 import ColorDecorator from "./biz-logic/ColorDecorator";
-// import SemesterSchedule from './biz-logic/SemesterSchedule';
 import XLSX from 'xlsx';
 import cheerio from 'cheerio';
 import HtmlParserFactory from "./biz-logic/HtmlParserFactory";
@@ -34,16 +33,10 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    // const semesterSchedule = new SemesterSchedule();
     const warningBuilder = new WarningBuilder();
-
-
     warningBuilder.add("RoomCapacityIssueDetector");
     warningBuilder.add("RoomDoubleBookingIssueDetector");
     warningBuilder.add("InstructorDoubleBookingIssueDetector");
-
-    // const initialClassEvents = semesterSchedule.events();
-    // const warnings = warningBuilder.warningsFor(semesterSchedule);
 
     this.state = {
       orFilterText: "",
@@ -52,18 +45,16 @@ class App extends Component {
       filteredClassEvents: [],
       warningList: [],
       warningBuilder: warningBuilder,
-      firstMonday: "",
-      semesterStart: "",
-      semesterEnd: ""
+      mondayOfFirstFullWeek: "",
+      fridayOfFirstFullWeek: ""
     };
-
 
     this.handleAndFilterTextChange = this.handleAndFilterTextChange.bind(this);
     this.handleOrFilterTextChange = this.handleOrFilterTextChange.bind(this);
     this.handleFileDrop = this.handleFileDrop.bind(this);
-
-
   }
+
+
 
   isOnMonday(event) {
     const eventStartDate = moment(event.start);
@@ -82,69 +73,75 @@ class App extends Component {
   /**
    * FullCalendar expects end range of agenda calendar view to
    * be in YYYY-MM-DD format. For example, "2019-01-11".
+   * 
+   * The range end is actually the Saturday of the week - when FullCalendar
+   * takes in a display range, the end day is exclusive!
    */
   rangeEnd() {
     return moment(this.rangeStart()).add(5, 'd').format("YYYY-MM-DD");
   }
-
-  componentDidMount() {
-    fetch(process.env.PUBLIC_URL + "/raw-data/fall-2018.html")
-      .then(response => response.text())
-      .then(
-        (result) => {
-          let rawRows = [];
-          // let sections = [];
-          // console.log("result", result);
-          const $ = cheerio.load(result);
-
-          $('table.datadisplaytable td').each(function() {
-            rawRows.push($(this).text());
-          });
-          const parsedClassroomEvents = htmlDumpParser.parse(rawRows);
-
-          this.handleFileDrop(parsedClassroomEvents);
-
-        },
-        (error) => {
-          console.log("error processing scrape file");
-        });
-  }
-
   /*
     componentDidMount() {
-      fetch(process.env.PUBLIC_URL + "/raw-data/winter-2019.xlsx")
-        .then(response => response.arrayBuffer())
+      fetch(process.env.PUBLIC_URL + "/raw-data/fall-2018.html")
+        .then(response => response.text())
         .then(
           (result) => {
-            let sections = [];
+            let rawRows = [];
+            // let sections = [];
+            // console.log("result", result);
+            const $ = cheerio.load(result);
 
-            let data = new Uint8Array(result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const macoWorksheet = XLSX.utils.sheet_to_json(workbook.Sheets["MACO"]);
-            const cleanedSpreadsheetRows = spreadsheetRowCleaner.clean(macoWorksheet);
-            let id = 1;
-            cleanedSpreadsheetRows.forEach(row => {
-              let section = courseEventFactory.newEvent(row, id);
-              sections.push(section);
-              id++;
+            $('table.datadisplaytable td').each(function() {
+              rawRows.push($(this).text());
             });
-            this.handleFileDrop(sections);
+            const parsedClassroomEvents = htmlDumpParser.parse(rawRows);
+
+            this.handleFileDrop(parsedClassroomEvents);
 
           },
           (error) => {
-            console.log("error");
+            console.log("error processing scrape file");
           });
     }
   */
+
+  componentDidMount() {
+    fetch(process.env.PUBLIC_URL + "/raw-data/fall-2018.xlsx")
+      .then(response => response.arrayBuffer())
+      .then(
+        (result) => {
+          let sections = [];
+
+          let data = new Uint8Array(result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const macoWorksheet = XLSX.utils.sheet_to_json(workbook.Sheets["MACO"]);
+          const cleanedSpreadsheetRows = spreadsheetRowCleaner.clean(macoWorksheet);
+          let id = 1;
+          cleanedSpreadsheetRows.forEach(row => {
+            let section = courseEventFactory.newEvent(row, id);
+            sections.push(section);
+            id++;
+          });
+          this.handleFileDrop(sections);
+
+        },
+        (error) => {
+          console.log("error");
+        });
+  }
+
 
   /**
    * Clears the filter boxes and empties out the class events.
    */
   clearScreen() {
-    this.setState({ classEvents: [] });
-    this.setState({ filteredClassEvents: [] });
     this.setState({ orFilterText: "" });
     this.setState({ andFilterText: "" });
+    this.setState({ classEvents: [] });
+    this.setState({ filteredClassEvents: [] });
+    this.setState({ warningList: [] });
+    this.setState({ mondayOfFirstFullWeek: "" });
+    this.setState({ fridayOfFirstFullWeek: "" });
   }
 
   /**
@@ -171,12 +168,9 @@ class App extends Component {
     const warnings = this.state.warningBuilder.warningsFor(semesterSchedule);
     this.setState({ warningList: warnings });
 
-    this.setState({ semesterStart: this.rangeStart() });
-    this.setState({ semesterEnd: this.rangeEnd() });
+    this.setState({ mondayOfFirstFullWeek: this.rangeStart() });
+    this.setState({ fridayOfFirstFullWeek: this.rangeEnd() });
   }
-
-
-
 
 
   /**
@@ -259,8 +253,8 @@ class App extends Component {
         />
         <Calendar
           filteredClassEvents={ filteredClassEvents }
-          semesterStart= {this.state.semesterStart}
-          semesterEnd = {this.state.semesterEnd}
+          mondayOfFirstFullWeek= {this.state.mondayOfFirstFullWeek}
+          fridayOfFirstFullWeek = {this.state.fridayOfFirstFullWeek}
         />
         <SideBar
           orFilterText={ this.state.orFilterText }
