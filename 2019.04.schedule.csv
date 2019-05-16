@@ -1,4 +1,4 @@
-Course,section,capacity,Assigned Day,Assigned Start Time,Assigned Duration,room,First Name,Last Name
+Course,section,sectionCapacity,Assigned Day,Assigned Start Time,Assigned Duration,room,First Name,Last Name
 COMP1103,1,50,Thursday,11:30,1:30,O222,Patrick,Perri
 COMP1103,1,50,Tuesday,11:30,1:30,O222,Patrick,Perri
 COMP1103,501,25,Tuesday,14:00,1:00,E203,Patrick,Perri
@@ -216,4 +216,4 @@ MATH3201,1,20,Tuesday,11:30,3:00,I149F,Roberta,La Haye
 MATH4201,1,10,Friday,11:30,3:00,EA1045,Peter,Zizler
 GEOL4105,1,24,Wednesday,10:00,1:30,B140,TBA,TBA
 GEOL4105,1,24,Monday,10:00,1:30,B140,TBA,TBA
-GEOL4105,501,24,Friday,9:00,3:00,B140,TBA,TBA
+GEOL4105,501,24,Friday,9:00,3:00,B140,TBA
