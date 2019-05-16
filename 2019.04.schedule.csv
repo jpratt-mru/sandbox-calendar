@@ -1,4 +1,4 @@
-Course,section,sectionCapacity,Assigned Day,Assigned Start Time,Assigned Duration,room,First Name,Last Name
+course,section,section-capacity,dow,start-time,duration,room,first-name,last-name
 COMP1103,1,50,Thursday,11:30,1:30,O222,Patrick,Perri
 COMP1103,1,50,Tuesday,11:30,1:30,O222,Patrick,Perri
 COMP1103,501,25,Tuesday,14:00,1:00,E203,Patrick,Perri
